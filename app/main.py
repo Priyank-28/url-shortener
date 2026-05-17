@@ -81,6 +81,10 @@ def get_stats(short_code: str, db: Session = Depends(get_db)):
 def redirect_url(short_code: str, db: Session = Depends(get_db)):
     cached = get_cached_url(short_code)
     if cached:
+        db.query(URL).filter(URL.short_code == short_code).update(
+            {"clicks": URL.clicks + 1}
+        )
+        db.commit()
         return RedirectResponse(url=cached, status_code=307)
 
     url_entry = db.query(URL).filter(URL.short_code == short_code).first()
