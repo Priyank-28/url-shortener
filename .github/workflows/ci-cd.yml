@@ -53,3 +53,27 @@ jobs:
           tags: |
             ghcr.io/priyank-28/url-shortener:latest
             ghcr.io/priyank-28/url-shortener:${{ github.sha }}
+
+  update-manifest:
+    needs: build-and-push
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out the k8s manifest repo
+        uses: actions/checkout@v4
+        with:
+          repository: Priyank-28/url-shortener-k8s
+          token: ${{ secrets.K8S_REPO_TOKEN }}
+
+      - name: Update image tag in kustomization
+        run: |
+          sed -i "s|newTag: .*|newTag: ${{ github.sha }}|" k8s/kustomization.yaml
+          echo "--- updated kustomization.yaml ---"
+          cat k8s/kustomization.yaml
+
+      - name: Commit and push
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add k8s/kustomization.yaml
+          git diff --cached --quiet || git commit -m "Update image to ${{ github.sha }}"
+          git push
