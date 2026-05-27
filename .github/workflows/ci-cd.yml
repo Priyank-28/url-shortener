@@ -50,4 +50,6 @@ jobs:
         with:
           context: .
           push: true
-          tags: ghcr.io/priyank-28/url-shortener:latest
+          tags: |
+            ghcr.io/priyank-28/url-shortener:latest
+            ghcr.io/priyank-28/url-shortener:${{ github.sha }}
