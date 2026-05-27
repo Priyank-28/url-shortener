@@ -1,0 +1,9 @@
+name: CI/CD
+
+on: push
+
+jobs:
+  hello:
+    runs-on: ubuntu-latest
+    steps:
+      - run: echo "Pipeline is alive, Priyank"
